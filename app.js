@@ -217,23 +217,23 @@ var checkAllDiagonalsOnBoard = function(board, segmentLength) {
   return getResultForMatch(false, null, null);
 }
 
-var checkBoardForWins = function(board, segmentLength) {
+var checkBoardForWinner = function(board, segmentLength) {
   var rowMatch = checkAllRowsOnBoard(board, segmentLength);
   if (rowMatch.wasFound) {
-    return true;
+    return rowMatch;
   }
 
   var columnMatch = checkAllColumnsOnBoard(board, segmentLength); // -> no win
   if (columnMatch.wasFound) {
-    return true;
+    return columnMatch;
   }
 
   var diagMatch = checkAllDiagonalsOnBoard(board, segmentLength);
   if (diagMatch.wasFound) {
-    return true;
+    return diagMatch;
   }
 
-  return false;
+  return getResultForMatch(false, null, null);
 }
 
 // console.log(generateForwardDiagonalIndices(3)); // --> (3) [ 6, 4, 2 ]
@@ -272,37 +272,64 @@ var checkBoardForWins = function(board, segmentLength) {
 // var result3 = lookingForMatch([ ' ', 'O', 'O']) // --> nothing
 // testFound(result3);
 
-var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+// var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
-var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
-var oboard = [ 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+// var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+// var oboard = [ 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+// var segmentLength = 3;
+// var spaceboard = [ ' ', 'O', 'O', 'O', ' ', 'O', 'O', 'O', ' ']
+// console.log(`checkAllRowsOnBoard(spaceboard) -->`);
+// console.log(checkAllRowsOnBoard(spaceboard, segmentLength)); // --> false
+// console.log(`checkAllRowsOnBoard(xboard) --> `);
+// console.log(checkAllRowsOnBoard(xboard, segmentLength)); // --> true
+// console.log(`checkAllRowsOnBoard(oboard) --> `);
+// console.log(checkAllRowsOnBoard(oboard, segmentLength)); // --> true
+
+// // var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
+// console.log(`checkAllColumnsOnBoard(emptyBoard) -->`);
+// console.log(checkAllColumnsOnBoard(emptyBoard, segmentLength)); // -> no match
+// console.log(`checkAllColumnsOnBoard(xboard) -->`);
+// console.log(checkAllColumnsOnBoard(xboard, segmentLength)); // -> match
+// console.log(`checkAllColumnsOnBoard(oboard) -->`);
+// console.log(checkAllColumnsOnBoard(oboard, segmentLength)); // -> match
+
+
+// console.log(`checkAllDiagonalsOnBoard(emptyBoard) -->`); 
+// console.log(checkAllDiagonalsOnBoard(emptyBoard, segmentLength)); // -->  false;
+// var board = [ 'X', 'O', 'O', 'X', ' ', 'X', 'O', ' ', 'X']
+// console.log(`checkAllDiagonalsOnBoard(board) -->`);
+// console.log(checkAllDiagonalsOnBoard(board, segmentLength)); // -->  false;
+// var board_2 = [ 'X', 'O', 'O', 'X', 'X', 'X', 'O', ' ', 'X']
+// console.log(`checkAllDiagonalsOnBoard(board_2) -->`);
+// console.log(checkAllDiagonalsOnBoard(board_2, segmentLength)); // -->  true;  \ bk slash
+// var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', 'O', ' ', 'X'];
+// console.log(`checkAllDiagonalsOnBoard(board_3) --`);
+// console.log(checkAllDiagonalsOnBoard(board_3, segmentLength)); // -->  true; / fwd slash
+
+
+// Get game state for the current board
+// Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
+// First look for matches in all rows for wins (3x)
+// Next look for matches in all columns for wins (3x)
+// Now check all diagonals for wins (2x)
+// If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
+// Else continue game
 
 var segmentLength = 3;
-var spaceboard = [ ' ', 'O', 'O', 'O', ' ', 'O', 'O', 'O', ' ']
-console.log(`checkAllRowsOnBoard(spaceboard) -->`);
-console.log(checkAllRowsOnBoard(spaceboard, segmentLength)); // --> false
-console.log(`checkAllRowsOnBoard(xboard) --> `);
-console.log(checkAllRowsOnBoard(xboard, segmentLength)); // --> true
-console.log(`checkAllRowsOnBoard(oboard) --> `);
-console.log(checkAllRowsOnBoard(oboard, segmentLength)); // --> true
+var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
-// var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
-console.log(`checkAllColumnsOnBoard(emptyBoard) -->`);
-console.log(checkAllColumnsOnBoard(emptyBoard, segmentLength)); // -> no match
-console.log(`checkAllColumnsOnBoard(xboard) -->`);
-console.log(checkAllColumnsOnBoard(xboard, segmentLength)); // -> match
-console.log(`checkAllColumnsOnBoard(oboard) -->`);
-console.log(checkAllColumnsOnBoard(oboard, segmentLength)); // -> match
+var figureOutIfGameHasEnded = function(board, segmentLength) {
+  var winner = checkBoardForWinner(board, segmentLength);
 
+  if (winner.wasFound) {
+    console.log("STOP GAME");
+  } else if (isGameADraw(board)) {
+    console.log("ITS A DRAW");
+  } else {
+    console.log("CARRY ON");
+  }
+}
 
-console.log(`checkAllDiagonalsOnBoard(emptyBoard) -->`); 
-console.log(checkAllDiagonalsOnBoard(emptyBoard, segmentLength)); // -->  false;
-var board = [ 'X', 'O', 'O', 'X', ' ', 'X', 'O', ' ', 'X']
-console.log(`checkAllDiagonalsOnBoard(board) -->`);
-console.log(checkAllDiagonalsOnBoard(board, segmentLength)); // -->  false;
-var board_2 = [ 'X', 'O', 'O', 'X', 'X', 'X', 'O', ' ', 'X']
-console.log(`checkAllDiagonalsOnBoard(board_2) -->`);
-console.log(checkAllDiagonalsOnBoard(board_2, segmentLength)); // -->  true;  \ bk slash
-var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', 'O', ' ', 'X'];
-console.log(`checkAllDiagonalsOnBoard(board_3) --`);
-console.log(checkAllDiagonalsOnBoard(board_3, segmentLength)); // -->  true; / fwd slash
+figureOutIfGameHasEnded(emptyBoard, segmentLength); // --> false
+
