@@ -22,19 +22,23 @@
 
 ### 1. Place either O or X on a board
 On script load
-  1. draw board
-  1. add click event listener on each cell 
+  1. Draw board made up of cells
+  1. Add click event listener on each cell 
 
 Event loop
-  1. wait for click on board
-  1. On click, check whose turns is it now
-  1. Make sure that the user can select an unoccupied space on the board
+  1. Wait for click on board
+  1. On click, check whose turns is it is next (either O or X)
+  1. If spot is occupied, ignore change; Current player is still able to pick another spot
+  1. If the user can select an unoccupied space on the board
   1. If player one (e.g. X), then draw X on the spot
   on the board
   1. Else if player two turn (e.g. O) then draw O on the spot on the board 
+  1. If the game has ended due to win/lost/draw (_Figure out either player has won_), alert players of the result;
+  1. Otherwise alternate mark to other team (e.g. X -> O or O -> X)
+  1. Else Prompt other player turn;
 
-### 2. Figure out either player (or AI) has won
-  ALSO CHECK for draw
+### 2. Figure out either player (or AI) has won (ALSO CHECK for draw)
+  
   1. Get game state for the current board
   1. Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
   1. First look for matches in all rows for wins (3x)
@@ -44,7 +48,7 @@ Event loop
   1. Else continue game 
 
 
-### 3. Output player has won or lost
+### 3. Alert player has won or lost
   Say player 1 (user) is X and player 2 is computer
 
   1. First count looking for a match on the grid
