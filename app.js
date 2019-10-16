@@ -322,6 +322,20 @@ figureOutIfGameHasEnded(xboard, segmentLength); // --> true / win
 var drawnGame = [ 'O', 'X', 'O', ' O', 'X', 'O', 'X', 'O', 'X']
 figureOutIfGameHasEnded(drawnGame, segmentLength); // --> true / draw
 
+// Event loop
+// - Wait for click on board  
+//   - On click, check whose turns is it is next (either O or X)
+//   - If spot is occupied, ignore change; Current player is still able to pick another spot
+//   - If the user can select an unoccupied space on the board
+//   - If player one (e.g. X), then draw X on the spot
+//   on the board
+//   - Else if player two turn (e.g. O) then draw O on the spot on the board 
+//   - If the game has ended due to win/lost/draw (_Figure out either player has won_), alert players of the result;
+//   - Otherwise alternate mark to other team (e.g. X -> O or O -> X)
+//   - Else Prompt other player turn;
+
+var playerMark = 'X';
+
 var handleClick = function(event) {
   var elem = event.target;
 
@@ -330,10 +344,26 @@ var handleClick = function(event) {
   // https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
   console.log(`Cell index :  ${elem.dataset.cellIndex}`)
   
-  elem.classList.add('cross');
+  if (elem.dataset.cellValue === undefined) {
+    if (playerMark === 'X') {
+      elem.classList.add('cross');
+      elem.dataset.cellValue = "X";
+      elem.textContent = 'X';
 
-  elem.dataset.cellValue = "X";
+      playerMark = 'O';
+
+    } else if (playerMark === 'O') {
+      elem.classList.add('nought');
+      elem.dataset.cellValue = "O";
+      elem.textContent = 'O';  
+
+      playerMark = 'X';
+    }
+  }
 }
+
+// On script load
+//   - Add click event listener on each cell 
 
 cells.forEach(function(cell) {
   cell.addEventListener('click', handleClick);
