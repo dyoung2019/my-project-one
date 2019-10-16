@@ -12,8 +12,6 @@ console.log('hello')
 // If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
 // Else continue game
 
-var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-
 // If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
 var isGameADraw = function(board) {
   var freeSpaces = 0;
@@ -28,9 +26,6 @@ var isGameADraw = function(board) {
 }
 
 // console.log(isGameADraw(emptyBoard));
-
-var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
-var oboard = [ 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
 
 // console.log(isGameADraw(xboard));
 
@@ -73,32 +68,11 @@ var testFound = function(result) {
   return result.wasMatchFound;
 }
 
-var checkAllRows = function(board, segmentLength) {
-  for(var i = 0; i < board.length; i += segmentLength) {
-    var segment = board.slice(i, i + segmentLength);
-    var match = lookingForMatch(segment);
-
-    if (match.wasFound) {
-      console.log("Match was found");
-      return true;
-    }
-  }
-  console.log("Match was not found");
-  return false;
+var getArrayIndex = function(segmentLength, row, column) {
+  var arrayIndex = segmentLength * row + column;
+  // console.log(`[${row}][${column}] --> ${arrayIndex}`);
+  return arrayIndex
 }
-
-// divide board in rows 
-var segmentLength = 3;
-// var spaceboard = [ ' ', 'O', 'O', 'O', ' ', 'O', 'O', 'O', ' ']
-// checkAllRows(spaceboard, segmentLength); // --> false
-// checkAllRows(xboard, segmentLength); // --> true
-// checkAllRows(oboard, segmentLength); // --> true
-
-// var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
-// checkAllColumns(xboard, segmentLength); // -> win
-// checkAllColumns(oboard, segmentLength) // -> win
-
-// Next look for matches in all columns for wins (3x)
 
 var extractSegment = function(board, indices) {
   var segment = [];
@@ -108,39 +82,75 @@ var extractSegment = function(board, indices) {
   return segment;
 }
 
-var checkAllColumns = function(board, segmentLength) {
-  // divide board into columns
-  for (var column = 0; column < segmentLength; column += 1) {
-    var columnIndexes = [];
-    for (var row = 0; row < segmentLength; row += 1) {
-      columnIndexes.push(segmentLength * row + column);
-    }
-    // console.table(columnIndexes);
-
-    var segment = extractSegment(board, columnIndexes);
-
-    var match = lookingForMatch(segment);
-    if (match.wasFound) {
-      console.log("Column Match was FOUND");
-      return true;
-    }
-  }
-  console.log("column match was not found");
-  return false;
+var performMatchOnBoard = function(board, indices) {
+  var segment = extractSegment(board, indices);
+  return lookingForMatch(segment);
 }
 
-var checkBoardForWins = function(board, segmentLength) {
-  checkAllRows(board, segmentLength);
-  checkAllColumns(board, segmentLength); // -> no win
+var generateRowIndices = function(offset, segmentLength) {
+  var indices = [];
+  for (var i = offset; i < segmentLength; i += 1) {
+    indices.push(i);
+  }
+  return indices;
+}
+
+var hasFoundMatch = function(count, noOfElements) {
+  return count > 0 && count === noOfElements;
+}
+
+var evaluateWhichMarkHasWon = function(match) {
+  if (hasFoundMatch(match.noOfCrosses,match.noOfElements)) {
+    return 'X';
+  } else if (hasFoundMatch(match.noOfNoughts, match.noOfElements)) {
+    return 'O';
+  }
+  return null;
+} 
+
+var getResultForMatch = function(wasFound, mark, indices) {
+  return {
+    wasFound: wasFound,
+    mark: mark,
+    indices: indices,
+  }; 
+}
+
+var checkAllRowsOnBoard = function(board, segmentLength) {
+  for(var i = 0; i < board.length; i += segmentLength) {
+    var indices = generateRowIndices(i, segmentLength);
+    
+    var match = performMatchOnBoard(board, indices);
+    if (match.wasFound) {
+      var winner = evaluateWhichMarkHasWon(match);
+      return getResultForMatch(true, winner, indices);
+    }
+  }
+  // console.log("Match was not found");
+  return getResultForMatch(false, null, null);
+}
+
+// Next look for matches in all columns for wins (3x)
+var checkAllColumnsOnBoard = function(board, segmentLength) {
+  // divide board into columns
+  for (var column = 0; column < segmentLength; column += 1) {
+    var indices = [];
+    for (var row = 0; row < segmentLength; row += 1) {
+      indices.push(getArrayIndex(segmentLength, row, column));
+    }
+
+    // console.table(columnIndexes);
+    var match = performMatchOnBoard(board, indices);
+    if (match.wasFound) {
+      var winner = evaluateWhichMarkHasWon(match);
+      return getResultForMatch(true, winner, indices);
+    }
+  }
+  // console.log("column match was not found");
+  return getResultForMatch(false, null, null);
 }
 
 // Now check all diagonals for wins (2x)
-
-var getArrayIndex = function(segmentLength, row, column) {
-  var arrayIndex = segmentLength * row + column;
-  // console.log(`[${row}][${column}] --> ${arrayIndex}`);
-  return arrayIndex
-}
 
 // var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
   
@@ -185,37 +195,46 @@ var generateBackwardDiagonalIndices = function(segmentLength) {
   return columnIndexes;
 }
 
-var performDiagonalMatch = function(board, indices) {
-  var forwardSegment = extractSegment(board, indices);
-  return lookingForMatch(forwardSegment);
-}
-
-var checkDiagonals = function(board, segmentLength) {
+var checkAllDiagonalsOnBoard = function(board, segmentLength) {
   var forwardDiagonal = generateForwardDiagonalIndices(segmentLength);
-  var forwardMatch = performDiagonalMatch(board, forwardDiagonal);
+  var forwardMatch = performMatchOnBoard(board, forwardDiagonal);
   if (forwardMatch.wasFound) {
-    console.log("Forward Diagonal was found");
-    return true;
+    // console.log("Forward Diagonal was found");
+    var winner = evaluateWhichMarkHasWon(forwardMatch);
+    return getResultForMatch(true, winner, forwardDiagonal);
   }
 
   // console.log(forwardSegment); // -> (3) [ 'O', ' ', 'O' ]
   var backwardDiagonal = generateBackwardDiagonalIndices(segmentLength);
-  var backwardMatch = performDiagonalMatch(board, backwardDiagonal);
+  var backwardMatch = performMatchOnBoard(board, backwardDiagonal);
   if (backwardMatch.wasFound) {
-    console.log("Backward Diagonal was found");
+    // console.log("Backward Diagonal was found");
+    var winner = evaluateWhichMarkHasWon(backwardMatch);
+    return getResultForMatch(true, winner, backwardDiagonal);
+  }
+
+  // console.log("Diagonal was not found");
+  return getResultForMatch(false, null, null);
+}
+
+var checkBoardForWins = function(board, segmentLength) {
+  var rowMatch = checkAllRowsOnBoard(board, segmentLength);
+  if (rowMatch.wasFound) {
     return true;
   }
 
-  console.log("Diagonal was not found");
+  var columnMatch = checkAllColumnsOnBoard(board, segmentLength); // -> no win
+  if (columnMatch.wasFound) {
+    return true;
+  }
+
+  var diagMatch = checkAllDiagonalsOnBoard(board, segmentLength);
+  if (diagMatch.wasFound) {
+    return true;
+  }
+
   return false;
 }
-
-var board = [ 'X', 'O', 'O', 'X', ' ', 'X', 'O', ' ', 'X']
-console.log(checkDiagonals(board, segmentLength)); // -->  false;
-var board_2 = [ 'X', 'O', 'O', 'X', 'X', 'X', 'O', ' ', 'X']
-console.log(checkDiagonals(board_2, segmentLength)); // -->  true;  \ bk slash
-var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', 'O', ' ', 'X']
-console.log(checkDiagonals(board_3, segmentLength)); // -->  true; / fwd slash
 
 // console.log(generateForwardDiagonalIndices(3)); // --> (3) [ 6, 4, 2 ]
 // console.log(generateForwardDiagonalIndices(4)); // --> (4) [ 12, 9, 6, 3 ]
@@ -252,3 +271,38 @@ console.log(checkDiagonals(board_3, segmentLength)); // -->  true; / fwd slash
 
 // var result3 = lookingForMatch([ ' ', 'O', 'O']) // --> nothing
 // testFound(result3);
+
+var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+
+var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+var oboard = [ 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+var segmentLength = 3;
+var spaceboard = [ ' ', 'O', 'O', 'O', ' ', 'O', 'O', 'O', ' ']
+console.log(`checkAllRowsOnBoard(spaceboard) -->`);
+console.log(checkAllRowsOnBoard(spaceboard, segmentLength)); // --> false
+console.log(`checkAllRowsOnBoard(xboard) --> `);
+console.log(checkAllRowsOnBoard(xboard, segmentLength)); // --> true
+console.log(`checkAllRowsOnBoard(oboard) --> `);
+console.log(checkAllRowsOnBoard(oboard, segmentLength)); // --> true
+
+// var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
+console.log(`checkAllColumnsOnBoard(emptyBoard) -->`);
+console.log(checkAllColumnsOnBoard(emptyBoard, segmentLength)); // -> no match
+console.log(`checkAllColumnsOnBoard(xboard) -->`);
+console.log(checkAllColumnsOnBoard(xboard, segmentLength)); // -> match
+console.log(`checkAllColumnsOnBoard(oboard) -->`);
+console.log(checkAllColumnsOnBoard(oboard, segmentLength)); // -> match
+
+
+console.log(`checkAllDiagonalsOnBoard(emptyBoard) -->`); 
+console.log(checkAllDiagonalsOnBoard(emptyBoard, segmentLength)); // -->  false;
+var board = [ 'X', 'O', 'O', 'X', ' ', 'X', 'O', ' ', 'X']
+console.log(`checkAllDiagonalsOnBoard(board) -->`);
+console.log(checkAllDiagonalsOnBoard(board, segmentLength)); // -->  false;
+var board_2 = [ 'X', 'O', 'O', 'X', 'X', 'X', 'O', ' ', 'X']
+console.log(`checkAllDiagonalsOnBoard(board_2) -->`);
+console.log(checkAllDiagonalsOnBoard(board_2, segmentLength)); // -->  true;  \ bk slash
+var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', 'O', ' ', 'X'];
+console.log(`checkAllDiagonalsOnBoard(board_3) --`);
+console.log(checkAllDiagonalsOnBoard(board_3, segmentLength)); // -->  true; / fwd slash
