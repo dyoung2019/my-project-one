@@ -1,16 +1,7 @@
-console.log('hello')
+var cells = document.querySelectorAll(".cell");
 
-// 2. Figure out either player (or AI) has won
-
-// ALSO CHECK for draw
-
-// Get game state for the current board
-// Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
-// First look for matches in all rows for wins (3x)
-// Next look for matches in all columns for wins (3x)
-// Now check all diagonals for wins (2x)
-// If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
-// Else continue game
+// ----------------------------
+// JS FUNCTIONS
 
 // If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
 var isGameADraw = function(board) {
@@ -25,13 +16,7 @@ var isGameADraw = function(board) {
   return (freeSpaces === 0);
 }
 
-// console.log(isGameADraw(emptyBoard));
-
-// console.log(isGameADraw(xboard));
-
-// First look for matches in all rows for wins (3x)
-
-var lookingForMatch = function(segment) {
+var lookingForMatchInArray = function(segment) {
   var noOfElements = segment.length;
   var noOfCrosses = 0;
   var noOfNoughts = 0;
@@ -58,16 +43,6 @@ var lookingForMatch = function(segment) {
   return result;
 }
 
-var testFound = function(result) {
-  if (result.wasMatchFound) {
-    console.log("WIN / LOST FOUND");
-  } else {
-    console.log("NOTHING FOUND")
-  } 
-
-  return result.wasMatchFound;
-}
-
 var getArrayIndex = function(segmentLength, row, column) {
   var arrayIndex = segmentLength * row + column;
   // console.log(`[${row}][${column}] --> ${arrayIndex}`);
@@ -84,7 +59,7 @@ var extractSegment = function(board, indices) {
 
 var performMatchOnBoard = function(board, indices) {
   var segment = extractSegment(board, indices);
-  return lookingForMatch(segment);
+  return lookingForMatchInArray(segment);
 }
 
 var generateRowIndices = function(offset, segmentLength) {
@@ -260,6 +235,15 @@ var checkBoardForWinner = function(board, segmentLength) {
 
 // TODO : where does the win come from
 
+// var testFound = function(result) {
+//   if (result.wasMatchFound) {
+//     console.log("WIN / LOST FOUND");
+//   } else {
+//     console.log("NOTHING FOUND")
+//   } 
+
+//   return result.wasMatchFound;
+// }
 // var result0 = lookingForMatch([ 'X', 'X', 'X']) // --> win / lost
 // testFound(result0);
 
@@ -307,23 +291,22 @@ var checkBoardForWinner = function(board, segmentLength) {
 // console.log(`checkAllDiagonalsOnBoard(board_3) --`);
 // console.log(checkAllDiagonalsOnBoard(board_3, segmentLength)); // -->  true; / fwd slash
 
-
-// Get game state for the current board
-// Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
-// First look for matches in all rows for wins (3x)
-// Next look for matches in all columns for wins (3x)
-// Now check all diagonals for wins (2x)
-// If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
-// Else continue game
-
 var segmentLength = 3;
 var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
 var figureOutIfGameHasEnded = function(board, segmentLength) {
+  // Get game state for the current board
+  // Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
+  // First look for matches in all rows for wins (3x)
+  // Next look for matches in all columns for wins (3x)
+  // Now check all diagonals for wins (2x)
+  // If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
+  // Else continue game
+
   var winner = checkBoardForWinner(board, segmentLength);
 
   if (winner.wasFound) {
-    console.log("STOP GAME");
+    console.log(`STOP GAME WINNER : ${winner.mark}`);
   } else if (isGameADraw(board)) {
     console.log("ITS A DRAW");
   } else {
@@ -333,3 +316,25 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
 
 figureOutIfGameHasEnded(emptyBoard, segmentLength); // --> false
 
+var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+figureOutIfGameHasEnded(xboard, segmentLength); // --> true / win
+
+var drawnGame = [ 'O', 'X', 'O', ' O', 'X', 'O', 'X', 'O', 'X']
+figureOutIfGameHasEnded(drawnGame, segmentLength); // --> true / draw
+
+var handleClick = function(event) {
+  var elem = event.target;
+
+  // get data index for cell
+
+  // https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+  console.log(`Cell index :  ${elem.dataset.cellIndex}`)
+  
+  elem.classList.add('cross');
+
+  elem.dataset.cellValue = "X";
+}
+
+cells.forEach(function(cell) {
+  cell.addEventListener('click', handleClick);
+})
