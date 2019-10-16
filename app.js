@@ -94,10 +94,19 @@ var segmentLength = 3;
 // checkAllRows(xboard, segmentLength); // --> true
 // checkAllRows(oboard, segmentLength); // --> true
 
+// var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
+// checkAllColumns(xboard, segmentLength); // -> win
+// checkAllColumns(oboard, segmentLength) // -> win
 
 // Next look for matches in all columns for wins (3x)
 
-var board = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
+var extractSegment = function(board, indices) {
+  var segment = [];
+  for (var i = 0; i < segmentLength; i += 1) {
+    segment.push( board[ indices[i] ] );
+  }
+  return segment;
+}
 
 var checkAllColumns = function(board, segmentLength) {
   // divide board into columns
@@ -108,11 +117,7 @@ var checkAllColumns = function(board, segmentLength) {
     }
     // console.table(columnIndexes);
 
-    // pick array into segment
-    var segment = [];
-    for (var i = 0; i < segmentLength; i += 1) {
-      segment.push( board[ columnIndexes[i] ] );
-    }
+    var segment = extractSegment(board, columnIndexes);
 
     var match = lookingForMatch(segment);
     if (match.wasFound) {
@@ -124,9 +129,115 @@ var checkAllColumns = function(board, segmentLength) {
   return false;
 }
 
-checkAllColumns(board, segmentLength); // -> no win
-checkAllColumns(xboard, segmentLength); // -> win
-checkAllColumns(oboard, segmentLength) // -> win
+var checkBoardForWins = function(board, segmentLength) {
+  checkAllRows(board, segmentLength);
+  checkAllColumns(board, segmentLength); // -> no win
+}
+
+// Now check all diagonals for wins (2x)
+
+var getArrayIndex = function(segmentLength, row, column) {
+  var arrayIndex = segmentLength * row + column;
+  // console.log(`[${row}][${column}] --> ${arrayIndex}`);
+  return arrayIndex
+}
+
+// var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', ' ', ' ', ' ']
+  
+// forward slash / Bottom Left -> Top Right
+var generateForwardDiagonalIndices = function(segmentLength) {
+  var columnIndexes = [ ];
+
+  var row = segmentLength - 1;
+  var column = 0;
+
+  var count = 0;
+  while (count < segmentLength) {
+    columnIndexes.push( getArrayIndex(segmentLength, row, column) );
+    // up one
+    row -= 1;
+    // right one
+    column += 1;
+    count += 1;
+  }
+
+  return columnIndexes;
+}
+
+// back slash \ Top Left -> Bottom Right
+var generateBackwardDiagonalIndices = function(segmentLength) {
+  var columnIndexes = [ ];
+
+  // Top Left 
+  var row = 0;
+  var column = 0;
+
+  var count = 0;
+  while (count < segmentLength) {
+    columnIndexes.push( getArrayIndex(segmentLength, row, column) );
+    // down one
+    row += 1;
+    // right one
+    column += 1;
+    count += 1;
+  }
+
+  return columnIndexes;
+}
+
+var performDiagonalMatch = function(board, indices) {
+  var forwardSegment = extractSegment(board, indices);
+  return lookingForMatch(forwardSegment);
+}
+
+var checkDiagonals = function(board, segmentLength) {
+  var forwardDiagonal = generateForwardDiagonalIndices(segmentLength);
+  var forwardMatch = performDiagonalMatch(board, forwardDiagonal);
+  if (forwardMatch.wasFound) {
+    console.log("Forward Diagonal was found");
+    return true;
+  }
+
+  // console.log(forwardSegment); // -> (3) [ 'O', ' ', 'O' ]
+  var backwardDiagonal = generateBackwardDiagonalIndices(segmentLength);
+  var backwardMatch = performDiagonalMatch(board, backwardDiagonal);
+  if (backwardMatch.wasFound) {
+    console.log("Backward Diagonal was found");
+    return true;
+  }
+
+  console.log("Diagonal was not found");
+  return false;
+}
+
+var board = [ 'X', 'O', 'O', 'X', ' ', 'X', 'O', ' ', 'X']
+console.log(checkDiagonals(board, segmentLength)); // -->  false;
+var board_2 = [ 'X', 'O', 'O', 'X', 'X', 'X', 'O', ' ', 'X']
+console.log(checkDiagonals(board_2, segmentLength)); // -->  true;  \ bk slash
+var board_3 = [ 'X', 'O', 'O', 'X', 'O', 'X', 'O', ' ', 'X']
+console.log(checkDiagonals(board_3, segmentLength)); // -->  true; / fwd slash
+
+// console.log(generateForwardDiagonalIndices(3)); // --> (3) [ 6, 4, 2 ]
+// console.log(generateForwardDiagonalIndices(4)); // --> (4) [ 12, 9, 6, 3 ]
+
+// console.log(generateBackwardDiagonalIndices(3)); // --> (3) [ 0, 4, 8 ]
+// console.log(generateBackwardDiagonalIndices(4)); // --> (4) [ 0, 5, 10, 15 ]
+
+
+
+  // // pick array into segment
+  // var segment = [];
+  // for (var i = 0; i < segmentLength; i += 1) {
+  //   segment.push( board[ columnIndexes[i] ] );
+  // }
+
+  // var match = lookingForMatch(segment);
+  // if (match.wasFound) {
+  //   console.log("Column Match was FOUND");
+  //   return true;
+  // }
+  
+
 
 // TODO : where does the win come from
 
