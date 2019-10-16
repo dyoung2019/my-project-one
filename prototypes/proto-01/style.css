@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  width: 300px;
+}
+
+.cell {
+  background-color: green;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  flex-grow: 1;
+  flex-basis: auto;
+}
+
+.nought {
+  background-color: red;
+}
+
+.cross {
+  background-color: cyan;
+}
