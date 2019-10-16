@@ -1,3 +1,9 @@
+:root {
+  --board-scale: 0.82; 
+  --board-x-offset: 10%;
+  --board-y-offset: 0px;
+}
+
 html,
 body,
 main {
@@ -11,15 +17,30 @@ div {
   padding: 0;
 }
 
-.container {
+.full-screen {
+  max-width: 375px;
+  max-height: 667px;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.board {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 50%;
+  /* board must be square */
+  width: calc(100% * var(--board-scale)); /* 375px / 375px 100%; */
+  height: calc(56.221889055472264% * var(--board-scale)); /* 375px / 667px; */
   /* align-items: stretch;
   justify-content: space-between; */
   /* align-items: stretch; */
   background-color: lightsteelblue;
+  transform-origin: center center;
+  /* transform-origin: left top; */
+  /* transform: scaleY(0.577350269189626) rotateZ(45deg); */
+  /* transform: rotateZ(45deg); */
+  transform: translate(var(--board-x-offset), var(--board-y-offset))
+   scale3d(var(--board-scale), var(--board-scale), 1.0) rotateX(60deg) rotateY(0deg) rotateZ(-45deg);
 }
 
 .row {

@@ -291,7 +291,7 @@ var checkBoardForWinner = function(board, segmentLength) {
 // console.log(`checkAllDiagonalsOnBoard(board_3) --`);
 // console.log(checkAllDiagonalsOnBoard(board_3, segmentLength)); // -->  true; / fwd slash
 
-var segmentLength = 3;
+
 var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
 var figureOutIfGameHasEnded = function(board, segmentLength) {
@@ -314,13 +314,13 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
   }
 }
 
-figureOutIfGameHasEnded(emptyBoard, segmentLength); // --> false
+// figureOutIfGameHasEnded(emptyBoard, segmentLength); // --> false
 
-var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
-figureOutIfGameHasEnded(xboard, segmentLength); // --> true / win
+// var xboard = [ 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+// figureOutIfGameHasEnded(xboard, segmentLength); // --> true / win
 
-var drawnGame = [ 'O', 'X', 'O', ' O', 'X', 'O', 'X', 'O', 'X']
-figureOutIfGameHasEnded(drawnGame, segmentLength); // --> true / draw
+// var drawnGame = [ 'O', 'X', 'O', ' O', 'X', 'O', 'X', 'O', 'X']
+// figureOutIfGameHasEnded(drawnGame, segmentLength); // --> true / draw
 
 // Event loop
 // - Wait for click on board  
@@ -334,6 +334,9 @@ figureOutIfGameHasEnded(drawnGame, segmentLength); // --> true / draw
 //   - Otherwise alternate mark to other team (e.g. X -> O or O -> X)
 //   - Else Prompt other player turn;
 
+// global variables
+
+var segmentLength = 3;
 var playerMark = 'X';
 
 var handleClick = function(event) {
@@ -360,6 +363,23 @@ var handleClick = function(event) {
       playerMark = 'X';
     }
   }
+
+  var gameBoard = [];
+
+  // Extract game mode
+  cells.forEach(function(cell) { 
+    var cellValue = cell.dataset.cellValue;
+
+    if (cellValue === undefined) {
+      cellValue = ' ';
+    }
+
+    gameBoard.push(cellValue);
+  })
+
+  console.log(gameBoard)
+
+  figureOutIfGameHasEnded(gameBoard, segmentLength);
 }
 
 // On script load
