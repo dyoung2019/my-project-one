@@ -11,19 +11,19 @@
 <body>
   <div class="full-screen">
     <header class="game-header">
-      <div class="score-row">
-          <section class="p1-name name-card">
+      <div class="score-row player-1-score">
+          <section class="name-card">
               Player 1
           </section>
-          <div class="p1-score score-plate">
+          <div class="score-card">
             12
           </div>
       </div>
-      <div class="score-row">
-          <section class="p2-name name-card">
-              Player 1
+      <div class="score-row player-2-score">
+          <section class="name-card">
+              Player 2
           </section>
-          <div class="p2-score score-plate">
+          <div class="score-card">
             12
           </div>
       </div>
@@ -49,15 +49,26 @@
     </main>
     <footer class="game-footer">
       <div class="footer-row">
-        <button>Reset Game</button>
-        <button>Clear Game</button>
+        <button class="reset-game-button">Reset Game</button>
+        <button class="clear-score-button">Clear Scores</button>
       </div>
 
       <div class="footer-row">
         <p>Copyright 2019 David Young</p>
       </div> 
     </footer>
+    <div class="pop-up">
+      <div class="title-row">
+        <h1 class="title title-step-top">Tic</h1>
+        <h1 class="title title-step-mid">Tac</h1>
+        <h1 class="title title-step-bottom">Toe</h1>
+      </div>
+      <div class="start-row">
+        <button class="start-game">Start</button>
+      </div>
+    </div>
   </div>
+ 
   <script src="app.js"></script>
 </body>
 </html>

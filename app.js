@@ -1,4 +1,12 @@
 var cells = document.querySelectorAll(".cell");
+var resetGameBtn = document.querySelector(".reset-game-button");
+var player1ScoreCardElem = document.querySelector(".player-1-score .score-card");
+var player2ScoreCardElem = 
+document.querySelector(".player-2-score .score-card");
+var clearAllScoresBtn = document.querySelector(".clear-score-button");
+var startButton = document.querySelector(".start-game");
+var popUpElement = document.querySelector(".pop-up");
+
 
 // ----------------------------
 // JS FUNCTIONS
@@ -292,7 +300,7 @@ var checkBoardForWinner = function(board, segmentLength) {
 // console.log(checkAllDiagonalsOnBoard(board_3, segmentLength)); // -->  true; / fwd slash
 
 
-var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+// var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
 var figureOutIfGameHasEnded = function(board, segmentLength) {
   // Get game state for the current board
@@ -336,17 +344,43 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
 
 // global variables
 
+var hasGameStarted = false;
 var segmentLength = 3;
 var playerMark = 'X';
 
-var handleClick = function(event) {
-  var elem = event.target;
+var player1CurrentScore = 0;
+var player2CurrentScore = 0;
 
-  // get data index for cell
+var updateScoreCards = function() {
+  player1ScoreCardElem.textContent = player1CurrentScore;
+  player2ScoreCardElem.textContent = player2CurrentScore;
+}
 
-  // https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
-  console.log(`Cell index :  ${elem.dataset.cellIndex}`)
-  
+var clearAllScores = function() {
+  player1CurrentScore = 0;
+  player2CurrentScore = 0;
+  updateScoreCards();
+}
+
+var extractGameBoard = function() {
+  var gameBoard = []
+
+  // Extract game mode
+  cells.forEach(function(cell) { 
+    var index = cell.dataset.cellIndex;
+
+    var cellValue = cell.dataset.cellValue;
+
+    if (cellValue === undefined) {
+      cellValue = ' ';
+    }
+
+    gameBoard[index] = cellValue;
+  })
+  return gameBoard;
+}
+
+var markCell = function(elem) {
   if (elem.dataset.cellValue === undefined) {
     elem.classList.remove('empty-cell');
 
@@ -365,23 +399,26 @@ var handleClick = function(event) {
       playerMark = 'X';
     }
   }
+}
 
-  var gameBoard = [];
+var handleClick = function(event) {
+  if (hasGameStarted) {
 
-  // Extract game mode
-  cells.forEach(function(cell) { 
-    var cellValue = cell.dataset.cellValue;
+    var elem = event.target;
 
-    if (cellValue === undefined) {
-      cellValue = ' ';
-    }
+    // get data index for cell
 
-    gameBoard.push(cellValue);
-  })
+    // https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+    console.log(`Cell index :  ${elem.dataset.cellIndex}`)
+    
+    markCell(elem);
 
-  console.log(gameBoard)
+    var gameBoard = extractGameBoard();
 
-  figureOutIfGameHasEnded(gameBoard, segmentLength);
+    // console.log(gameBoard)
+
+    figureOutIfGameHasEnded(gameBoard, segmentLength);
+  }
 }
 
 // On script load
@@ -390,3 +427,37 @@ var handleClick = function(event) {
 cells.forEach(function(cell) {
   cell.addEventListener('click', handleClick);
 })
+
+var handleResetGame = function() {
+  cells.forEach(function(cell){
+    
+    cell.classList.add('empty-cell');
+
+    cell.classList.remove('cross');
+    cell.classList.remove('nought');
+
+    if (cell.hasAttribute("data-cell-value")) {
+      cell.removeAttribute("data-cell-value");
+    }
+    
+    cell.textContent = ' ';  
+  });
+}
+
+
+resetGameBtn.addEventListener('click', handleResetGame);
+
+var handleClearAllScores = function() {
+  clearAllScores();
+}
+
+clearAllScoresBtn.addEventListener('click', handleClearAllScores);
+
+var handleStartGame = function() {
+  popUpElement.classList.add("minimize-pop-up");
+  hasGameStarted = true;
+}
+
+startButton.addEventListener('click', handleStartGame);
+
+clearAllScores();

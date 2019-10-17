@@ -30,6 +30,7 @@ div {
   height: 100%;
   width: 100%;
   margin: 0 auto;
+  position: absolute;
 }
 
 .game-header {
@@ -58,7 +59,7 @@ div {
   flex-shrink: 0;
 }
 
-.game-header .score-plate {
+.game-header .score-card {
   background-color: rebeccapurple;
   width: 200px;
   height: 200px;
@@ -68,14 +69,19 @@ div {
   flex-grow: 1;
   flex-shrink: 0;
   overflow: visible;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  font-size: 10.0rem; /* 200 / 16 */
 }
 
-.game-header .p1-score {
+.player-1-score .score-card  {
   background-color: lightgreen;
   z-index: 1;
 }
 
-.game-header .p2-score {
+.player-2-score .score-card {
   background-color: lightsalmon;
   z-index: 0;
 }
@@ -130,11 +136,13 @@ main {
 
 .empty-cell {
   background-color: green;
+  transform: transform 300ms;
 }
 
 .empty-cell:hover {
   background-color: lightgreen;
-  transition: background-color 300ms;
+  transform: translateX(10px) translateY(-10px);
+  transition: transform 500ms, background-color 500ms;
 }
 
 .cross {
@@ -159,6 +167,92 @@ main {
 
 .game-footer button {
   background-color: white;
-  height: 100%;
+  height: 506.09%;
   width: 48.81%;
+
+  transform-origin: center;
+  transform: scaleY(0.577350269189626) rotateZ(-45deg);
+  /* transform: rotateZ(-45deg); */
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: visible;
+
+  font-size: 1.5rem;
+}
+
+.game-footer .reset-game-button {
+  background-color: lemonchiffon;
+}
+
+.game-footer .reset-game-button:hover {
+  background-color: rgb(242, 240, 222);
+}
+
+.game-footer 
+.clear-score-button {
+  background-color: lightcoral;
+ 
+}
+
+.game-footer 
+.clear-score-button:hover {
+  background-color: rgb(244, 180, 180);
+}
+
+.pop-up {
+  z-index: 2;
+  width: 90%;
+  height: 30%;
+  background-color: peachpuff;
+  position: absolute;
+  top: 45.96%;
+  height: 25.69%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-row {
+  position: relative;
+  height: 18.93%;
+  display: flex;
+  margin: 0 auto;
+}
+
+.title {
+  transform: scaleY(0.577350269189626) rotateZ(-45deg);
+  /* transform: rotateZ(-45deg); */
+  background-color: red;
+  flex-shrink: 1;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-step-top {
+  background-color: lightpink;
+  /* z-index: 5; */
+}
+
+.title-step-mid {
+  background-color: pink;
+  /* z-index: 4; */
+}
+
+.title-step-bottom {
+  background-color: darkred;
+  /* z-index: 3; */
+}
+
+.start-row {
+  background-color: paleturquoise;
+  position: relative;
+  width: 100%;
+  height: 18.93%;
+}
+
+.minimize-pop-up {
+  display: none;
 }
