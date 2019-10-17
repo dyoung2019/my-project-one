@@ -4,7 +4,7 @@ var player1ScoreCardElem = document.querySelector(".player-1-score .score-card")
 var player2ScoreCardElem = 
 document.querySelector(".player-2-score .score-card");
 var clearAllScoresBtn = document.querySelector(".clear-score-button");
-var startButton = document.querySelector(".start-game");
+var startButton = document.querySelector(".start-game-button");
 var popUpElement = document.querySelector(".pop-up");
 
 
