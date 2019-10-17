@@ -1,7 +1,11 @@
 :root {
-  --board-scale: 0.82; 
-  --board-x-offset: 10%;
+  --board-scale: 0.70; 
+  --board-x-offset: 0px;
   --board-y-offset: 0px;
+
+  --tile-scale: 0.64; 
+  --tile-x-offset: -5px;
+  --tile-y-offset: -56px; 
 }
 
 html,
@@ -18,29 +22,87 @@ div {
 }
 
 .full-screen {
+  padding: 33.35px 18.75px;
+  min-width: 375px;
   max-width: 375px;
+  min-height: 667px;
   max-height: 667px;
   height: 100%;
   width: 100%;
   margin: 0 auto;
 }
 
+.game-header {
+  background-color: blue;
+  width: 100%;
+  height: 25.69%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.game-header .score-row {
+  width: 100%;
+  height: 44.53%;
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 44.53%;
+}
+
+.game-header .name-card {
+  background-color: tan;
+  flex-basis: 48.81%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.game-header .score-plate {
+  background-color: rebeccapurple;
+  width: 200px;
+  height: 200px;
+  transform-origin: center;
+  transform: translate(var(--tile-x-offset), var(--tile-y-offset))
+    scale3d(var(--tile-scale), calc(var(--tile-scale) * 0.577350269189626), 1.0) rotateZ(-45deg);
+  flex-grow: 1;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.game-header .p1-score {
+  background-color: lightgreen;
+  z-index: 1;
+}
+
+.game-header .p2-score {
+  background-color: lightsalmon;
+  z-index: 0;
+}
+
+main {
+  max-height: 59.47%; /* 9 rows, 8 gutters + top-bottom-margins 356.98px */
+  /* overflow: hidden; */
+}
+
 .board {
   display: flex;
   flex-direction: column;
   /* board must be square */
-  width: calc(100% * var(--board-scale)); /* 375px / 375px 100%; */
-  height: calc(56.221889055472264% * var(--board-scale)); /* 375px / 667px; */
+  padding: 10px;
+  width: 100%; /* 375px / 375px 100%; */
+  height: 94.54%; /* 337.5px / 356.98px; */
   /* align-items: stretch;
   justify-content: space-between; */
   /* align-items: stretch; */
   background-color: lightsteelblue;
   transform-origin: center center;
   /* transform-origin: left top; */
-  /* transform: scaleY(0.577350269189626) rotateZ(45deg); */
-  /* transform: rotateZ(45deg); */
   transform: translate(var(--board-x-offset), var(--board-y-offset))
-   scale3d(var(--board-scale), var(--board-scale), 1.0) rotateX(60deg) rotateY(0deg) rotateZ(-45deg);
+    scale3d(var(--board-scale), calc(var(--board-scale) * 0.577350269189626), 1.0) rotateZ(-45deg);
+  /* transform: rotateZ(45deg); */
+  /* transform: translate(var(--board-x-offset), var(--board-y-offset))
+   scale3d(var(--board-scale), var(--board-scale), 1.0) rotateX(60deg) rotateZ(-45deg); */
 }
 
 .row {
@@ -73,4 +135,22 @@ div {
 
 .cross {
   background-color: cyan;
+}
+
+.game-footer {
+  height: 12.18%;
+  background-color: lightgoldenrodyellow;
+}
+
+.game-footer .footer-row {
+  height: 44.53%;
+  background-color: cornflowerblue;
+  display: flex;
+  justify-content: space-between;
+}
+
+.game-footer button {
+  background-color: white;
+  height: 100%;
+  width: 48.81%;
 }

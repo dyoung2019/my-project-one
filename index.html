@@ -10,8 +10,23 @@
 </head>
 <body>
   <div class="full-screen">
-    <header>
-      <h1>Tic Tac Toe</h1>
+    <header class="game-header">
+      <div class="score-row">
+          <section class="p1-name name-card">
+              Player 1
+          </section>
+          <div class="p1-score score-plate">
+            12
+          </div>
+      </div>
+      <div class="score-row">
+          <section class="p2-name name-card">
+              Player 1
+          </section>
+          <div class="p2-score score-plate">
+            12
+          </div>
+      </div>
     </header>
     <main>
       <div class="board">
@@ -32,8 +47,15 @@
         </div>
       </div>
     </main>
-    <footer>
-      
+    <footer class="game-footer">
+      <div class="footer-row">
+        <button>Reset Game</button>
+        <button>Clear Game</button>
+      </div>
+
+      <div class="footer-row">
+        <p>Copyright 2019 David Young</p>
+      </div> 
     </footer>
   </div>
   <script src="app.js"></script>
