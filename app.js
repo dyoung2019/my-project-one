@@ -337,7 +337,7 @@ var player2CurrentScore = 0;
 var clearAllScores = function() {
   player1CurrentScore = 0;
   player2CurrentScore = 0;
-  updateScoreCards();
+  refreshScoreCardsOnScreen();
 }
 
 var resetGame = function() {
@@ -368,6 +368,23 @@ var updateNextMarkOnScreen = function() {
   }
 }
 
+var updateWinningPlayerScore = function() {
+  if (currentPlayer === 1) {
+    player1CurrentScore += 1;
+  } else if (currentPlayer === 2) {
+    player2CurrentScore += 1;
+  }
+}
+
+var endCurrentPlayerTurn = function() {
+  // toggle player
+  if (currentPlayer === 1) {
+    currentPlayer = 2;
+  } else if (currentPlayer === 2) {
+    currentPlayer = 1;
+  }
+}
+
 var figureOutIfGameHasEnded = function(board, segmentLength) {
   // Get game state for the current board
   // Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
@@ -382,12 +399,8 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
   if (winner.wasFound) {
     console.log(`STOP GAME WINNER : Player ${currentPlayer} : (${winner.mark})`);
     
-    if (currentPlayer === 1) {
-      player1CurrentScore += 1;
-    } else if (currentPlayer === 2) {
-      player2CurrentScore += 1;
-    }
-    updateScoreCards();
+    updateWinningPlayerScore();
+    refreshScoreCardsOnScreen();
     resetGame();
   } else if (isGameADraw(board)) {
     console.log("ITS A DRAW");
@@ -396,16 +409,11 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
     console.log(`CARRY ON ${currentPlayer}`);
   }
 
-  // toggle player
-  if (currentPlayer === 1) {
-    currentPlayer = 2;
-  } else if (currentPlayer === 2) {
-    currentPlayer = 1;
-  }
+  endCurrentPlayerTurn();
   updateNextMarkOnScreen();
 }
 
-var updateScoreCards = function() {
+var refreshScoreCardsOnScreen = function() {
   player1ScoreCardElem.textContent = player1CurrentScore;
   player2ScoreCardElem.textContent = player2CurrentScore;
 }
