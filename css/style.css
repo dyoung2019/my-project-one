@@ -42,15 +42,33 @@ main {
   background-color: var(--theme-color-bg);
 }
 
-h1,
-h2,
 body,
 section,
 header,
 footer,
 div {
-  margin: 0;
-  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 1.0rem;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 2.0rem;
+}
+
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+}
+
+button {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 1.0rem;
+  text-transform: uppercase;
 }
 
 h1,
@@ -100,8 +118,7 @@ span {
   flex-shrink: 0;
   border-radius: 16px 0 0 0;
   padding: 8px;
-  font-size: 1.0rem;
-  transition: font-size 300ms;
+  transition: transform 300ms;
 }
 
 
@@ -119,6 +136,8 @@ span {
   display: flex;
   justify-content: center;
   align-content: center;
+  /* H1 */
+  font-weight: 700;
   font-size: 10.0rem; /* 200 / 16 */
 }
 
@@ -145,7 +164,7 @@ span {
 .current-player-name-hint {
   transform: scale3d(1.05, 1.05, 1);
   transition: transform 300ms, font-size 300ms, box-shadow 300ms;
-  font-size: 1.5rem;
+  /* font-size: 1.5rem; */
   box-shadow: 5px 10px 10px -4px var(--theme-color-2-lite);
 }
 
@@ -195,6 +214,9 @@ main {
   align-items: center;
 
   border: 1px solid black;
+
+  font-weight: 900;
+  font-size: 2.0rem;
 }
 
 .empty-cell {
@@ -257,6 +279,9 @@ main {
 }
 
 .game-footer .tile-space {
+  font-weight: 900;
+  font-size: 2.0rem;
+
   width: 100px;
   height: 100px;
   background-color: var(--theme-color-3);
@@ -383,7 +408,8 @@ main {
 .start-game-button:hover {
   background-color: var(--theme-color-3-dark);
   border: 4px solid var(--theme-color-2-lite);
-  transition: border 300ms, background-color 300ms;
+  transform: translateY(2px);
+  transition: transform 300ms, border 300ms, background-color 300ms;
 }
 
 .win-splash {
@@ -403,6 +429,8 @@ main {
 
 .win-splash h2 {
   text-align: center;
+
+  font-size: 3.0rem;
 }
 
 .win-splash .win-continue-row{
@@ -414,6 +442,9 @@ main {
 
 .winner-text {
   text-align: center;
+
+  font-weight: 300;
+  font-size: 2.0rem;
 }
 
 .continue-game-on-win {
@@ -427,7 +458,8 @@ main {
 .continue-game-on-win:hover {
   background-color: var(--theme-color-3-dark);
   border: 4px solid var(--theme-color-2-lite);
-  transition: border 300ms, background-color 300ms;
+  transform: translateY(2px);
+  transition: transform 300ms, border 300ms, background-color 300ms;
 }
 
 .draw-splash {
@@ -438,6 +470,8 @@ main {
 
 .draw-splash h2 {
   text-align: center;
+
+  font-size: 3.0rem;
 }
 
 .draw-continue-row {
@@ -457,7 +491,8 @@ main {
 .continue-game-on-draw:hover {
   background-color: var(--theme-color-3-dark);
   border: 4px solid var(--theme-color-2-lite);
-  transition: border 300ms, background-color 300ms;
+  transform: translateY(2px);
+  transition: transform 300ms, border 300ms, background-color 300ms;
 }
 
 .minimize-pop-up {

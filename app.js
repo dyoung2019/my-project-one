@@ -472,7 +472,11 @@ var highlightWinningPlay = function(indices) {
 }
 
 var presentWinnerOnScreen = function() {
-  winnerMessageElement.textContent = `Player ${currentPlayerNum}, you win`;
+  if (isPlayerOneTurn()) {
+    winnerMessageElement.textContent = `Player One wins!`;
+  } else {
+    winnerMessageElement.textContent = `Player Two wins!`;
+  }
 }
 
 var figureOutIfGameHasEnded = function(board, segmentLength) {

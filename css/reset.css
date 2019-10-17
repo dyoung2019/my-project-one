@@ -1,3 +1,18 @@
 * {
   box-sizing: border-box;
 }
+
+body,
+main,
+header,
+footer,
+p,
+h1,
+h2,
+h3,
+div,
+span,
+section {
+  margin: 0;
+  padding: 0;
+}
