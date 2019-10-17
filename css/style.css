@@ -116,7 +116,6 @@ main {
 }
 
 .cell {
-  background-color: green;
   /* cell height twitches if content changes;  */
   flex-basis: 10px;
   flex-shrink: 0;
@@ -129,12 +128,21 @@ main {
   border: 1px solid black;
 }
 
-.nought {
-  background-color: red;
+.empty-cell {
+  background-color: green;
+}
+
+.empty-cell:hover {
+  background-color: lightgreen;
+  transition: background-color 300ms;
 }
 
 .cross {
   background-color: cyan;
+}
+
+.nought {
+  background-color: red;
 }
 
 .game-footer {

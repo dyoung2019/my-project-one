@@ -348,6 +348,8 @@ var handleClick = function(event) {
   console.log(`Cell index :  ${elem.dataset.cellIndex}`)
   
   if (elem.dataset.cellValue === undefined) {
+    elem.classList.remove('empty-cell');
+
     if (playerMark === 'X') {
       elem.classList.add('cross');
       elem.dataset.cellValue = "X";
