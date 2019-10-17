@@ -179,12 +179,19 @@ main {
   justify-content: center;
   align-items: center;
 }
-
 .tile-space {
   width: 100px;
   height: 100px;
   background-color: darkred;
   z-index: 0;
+}
+
+.tile-space.player-one {
+  background-color: lightgreen;
+}
+
+.tile-space.player-two {
+  background-color: lightsalmon;
 }
 
 .game-footer button {

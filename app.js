@@ -6,7 +6,7 @@ document.querySelector(".player-2-score .score-card");
 var clearAllScoresBtn = document.querySelector(".clear-score-button");
 var startButton = document.querySelector(".start-game-button");
 var popUpElement = document.querySelector(".pop-up");
-
+var tileSpaceElem = document.querySelector(".tile-space")
 
 // ----------------------------
 // JS FUNCTIONS
@@ -302,25 +302,7 @@ var checkBoardForWinner = function(board, segmentLength) {
 
 // var emptyBoard = [ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
-var figureOutIfGameHasEnded = function(board, segmentLength) {
-  // Get game state for the current board
-  // Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
-  // First look for matches in all rows for wins (3x)
-  // Next look for matches in all columns for wins (3x)
-  // Now check all diagonals for wins (2x)
-  // If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
-  // Else continue game
 
-  var winner = checkBoardForWinner(board, segmentLength);
-
-  if (winner.wasFound) {
-    console.log(`STOP GAME WINNER : ${winner.mark}`);
-  } else if (isGameADraw(board)) {
-    console.log("ITS A DRAW");
-  } else {
-    console.log("CARRY ON");
-  }
-}
 
 // figureOutIfGameHasEnded(emptyBoard, segmentLength); // --> false
 
@@ -346,20 +328,86 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
 
 var hasGameStarted = false;
 var segmentLength = 3;
-var playerMark = 'X';
+var nextMarkOnScreen = 'X';
+var currentPlayer = 1;
 
 var player1CurrentScore = 0;
 var player2CurrentScore = 0;
-
-var updateScoreCards = function() {
-  player1ScoreCardElem.textContent = player1CurrentScore;
-  player2ScoreCardElem.textContent = player2CurrentScore;
-}
 
 var clearAllScores = function() {
   player1CurrentScore = 0;
   player2CurrentScore = 0;
   updateScoreCards();
+}
+
+var resetGame = function() {
+  cells.forEach(function(cell){
+    
+    cell.classList.add('empty-cell');
+
+    cell.classList.remove('cross');
+    cell.classList.remove('nought');
+
+    if (cell.hasAttribute("data-cell-value")) {
+      cell.removeAttribute("data-cell-value");
+    }
+    
+    cell.textContent = ' ';  
+  });
+  nextMarkOnScreen = 'X';
+}
+
+var updateNextMarkOnScreen = function() {
+  tileSpaceElem.textContent = nextMarkOnScreen;
+  if (currentPlayer === 1) {
+    tileSpaceElem.classList.add("player-one");
+    tileSpaceElem.classList.remove("player-two");
+  } else {
+    tileSpaceElem.classList.add("player-two");
+    tileSpaceElem.classList.remove("player-one");
+  }
+}
+
+var figureOutIfGameHasEnded = function(board, segmentLength) {
+  // Get game state for the current board
+  // Do a check for in-a-row matches; if match found, stop game and declare (End state: WIN OR LOSE)
+  // First look for matches in all rows for wins (3x)
+  // Next look for matches in all columns for wins (3x)
+  // Now check all diagonals for wins (2x)
+  // If there are no more free spaces (i.e no more possible moves) on the board left then declare (End state : DRAW)
+  // Else continue game
+
+  var winner = checkBoardForWinner(board, segmentLength);
+
+  if (winner.wasFound) {
+    console.log(`STOP GAME WINNER : Player ${currentPlayer} : (${winner.mark})`);
+    
+    if (currentPlayer === 1) {
+      player1CurrentScore += 1;
+    } else if (currentPlayer === 2) {
+      player2CurrentScore += 1;
+    }
+    updateScoreCards();
+    resetGame();
+  } else if (isGameADraw(board)) {
+    console.log("ITS A DRAW");
+    resetGame();
+  } else {
+    console.log(`CARRY ON ${currentPlayer}`);
+  }
+
+  // toggle player
+  if (currentPlayer === 1) {
+    currentPlayer = 2;
+  } else if (currentPlayer === 2) {
+    currentPlayer = 1;
+  }
+  updateNextMarkOnScreen();
+}
+
+var updateScoreCards = function() {
+  player1ScoreCardElem.textContent = player1CurrentScore;
+  player2ScoreCardElem.textContent = player2CurrentScore;
 }
 
 var extractGameBoard = function() {
@@ -384,19 +432,19 @@ var markCell = function(elem) {
   if (elem.dataset.cellValue === undefined) {
     elem.classList.remove('empty-cell');
 
-    if (playerMark === 'X') {
+    if (nextMarkOnScreen === 'X') {
       elem.classList.add('cross');
       elem.dataset.cellValue = "X";
       elem.textContent = 'X';
 
-      playerMark = 'O';
+      nextMarkOnScreen = 'O';
 
-    } else if (playerMark === 'O') {
+    } else if (nextMarkOnScreen === 'O') {
       elem.classList.add('nought');
       elem.dataset.cellValue = "O";
       elem.textContent = 'O';  
 
-      playerMark = 'X';
+      nextMarkOnScreen = 'X';
     }
   }
 }
@@ -429,21 +477,9 @@ cells.forEach(function(cell) {
 })
 
 var handleResetGame = function() {
-  cells.forEach(function(cell){
-    
-    cell.classList.add('empty-cell');
-
-    cell.classList.remove('cross');
-    cell.classList.remove('nought');
-
-    if (cell.hasAttribute("data-cell-value")) {
-      cell.removeAttribute("data-cell-value");
-    }
-    
-    cell.textContent = ' ';  
-  });
+  resetGame();
+  updateNextMarkOnScreen();
 }
-
 
 resetGameBtn.addEventListener('click', handleResetGame);
 
@@ -456,6 +492,7 @@ clearAllScoresBtn.addEventListener('click', handleClearAllScores);
 var handleStartGame = function() {
   popUpElement.classList.add("minimize-pop-up");
   hasGameStarted = true;
+  updateNextMarkOnScreen();
 }
 
 startButton.addEventListener('click', handleStartGame);
