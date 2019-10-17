@@ -45,6 +45,9 @@ main {
 h1,
 h2,
 body,
+section,
+header,
+footer,
 div {
   margin: 0;
   padding: 0;
@@ -54,6 +57,7 @@ h1,
 h2,
 h3,
 div,
+section,
 span {
   color: var(--theme-color-2);
 }
@@ -89,14 +93,17 @@ span {
   flex-basis: 44.53%;
 }
 
-.game-header .name-card {
+ .name-card {
   background-color: var(--theme-color-4);
   flex-basis: 48.81%;
   flex-grow: 0;
   flex-shrink: 0;
   border-radius: 16px 0 0 0;
   padding: 8px;
+  font-size: 1.0rem;
+  transition: font-size 300ms;
 }
+
 
 .game-header .score-card {
   background-color: var(--theme-color-4);
@@ -133,6 +140,13 @@ span {
   background-color: var(--theme-color-5);
   box-shadow: 5px 10px 10px -4px var(--theme-color-5-dark);
   z-index: 0;
+}
+
+.current-player-name-hint {
+  transform: scale3d(1.05, 1.05, 1);
+  transition: transform 300ms, font-size 300ms, box-shadow 300ms;
+  font-size: 1.5rem;
+  box-shadow: 5px 10px 10px -4px var(--theme-color-2-lite);
 }
 
 main {
@@ -195,17 +209,23 @@ main {
   cursor: pointer;
 }
 
-.cell-occupied {
-  background-color: var(--theme-color-3);
+.player-1-mark {
+  background-color: var(--theme-color-3-dark);
+  transition: background-color 300ms;
 }
 
-.player-1-mark {
-  background-color: var(--theme-color-1-dark);
+.player-1-move {
+  background-color: var(--theme-color-1);
   transition: background-color 300ms;
 }
 
 .player-2-mark {
-  background-color: var(--theme-color-5-dark);
+  background-color: var(--theme-color-3-dark);
+  transition: background-color 300ms;
+}
+
+.player-2-move {
+  background-color: var(--theme-color-5);
   transition: background-color 300ms;
 }
 
@@ -243,12 +263,14 @@ main {
   z-index: 0;
 }
 
-.tile-space.player-one {
-  background-color: var(--theme-color-1);
+.tile-space.player-one-turn {
+  background-color: var(--theme-color-1-dark);
+  transition: background-color 300ms;
 }
 
-.tile-space.player-two {
-  background-color: var(--theme-color-5);
+.tile-space.player-two-turn {
+  background-color: var(--theme-color-5-dark);
+  transition: background-color 300ms;
 }
 
 .game-footer button {

@@ -1,5 +1,9 @@
 var cells = document.querySelectorAll(".cell");
 var resetGameBtn = document.querySelector(".reset-game-button");
+
+var player1NameCard = document.querySelector(".player-1-score .name-card");
+var player2NameCard = document.querySelector(".player-2-score .name-card");
+
 var player1ScoreCardElem = document.querySelector(".player-1-score .score-card");
 var player2ScoreCardElem = 
 document.querySelector(".player-2-score .score-card");
@@ -337,7 +341,7 @@ var checkBoardForWinner = function(board, segmentLength) {
 var hasGameStarted = false;
 var segmentLength = 3;
 var nextMarkOnScreen = 'X';
-var currentPlayer = 1;
+var currentPlayerNum = 1;
 
 var player1CurrentScore = 0;
 var player2CurrentScore = 0;
@@ -353,9 +357,11 @@ var resetGame = function() {
     
     cell.classList.add('empty-cell');
 
-    cell.classList.remove("cell-occupied");
+    // cell.classList.remove("cell-occupied");
     cell.classList.remove('player-1-mark');
     cell.classList.remove('player-2-mark');
+    cell.classList.remove('player-1-move');
+    cell.classList.remove('player-2-move');
 
     if (cell.hasAttribute("data-cell-value")) {
       cell.removeAttribute("data-cell-value");
@@ -366,10 +372,19 @@ var resetGame = function() {
   nextMarkOnScreen = 'X';
 }
 
+var isPlayerOneTurn = function() {
+  return currentPlayerNum === 1;
+}
+
 var markCell = function(elem) {
   if (elem.dataset.cellValue === undefined) {
     elem.classList.remove('empty-cell');
-    elem.classList.add('cell-occupied');
+
+    if (isPlayerOneTurn()) {
+      elem.classList.add('player-1-move');
+    } else {
+      elem.classList.add('player-2-move');
+    }
 
     if (nextMarkOnScreen === 'X') {
       elem.dataset.cellValue = "X";
@@ -383,21 +398,20 @@ var markCell = function(elem) {
 
       nextMarkOnScreen = 'X';
     }
+    return true;
+  } else {
+    return false;
   }
-}
-
-var isPlayerOneTurn = function() {
-  return currentPlayer === 1;
 }
 
 var updateNextMarkOnScreen = function() {
   tileSpaceElem.textContent = nextMarkOnScreen;
   if (isPlayerOneTurn()) {
-    tileSpaceElem.classList.add("player-one");
-    tileSpaceElem.classList.remove("player-two");
+    tileSpaceElem.classList.add("player-one-turn");
+    tileSpaceElem.classList.remove("player-two-turn");
   } else {
-    tileSpaceElem.classList.add("player-two");
-    tileSpaceElem.classList.remove("player-one");
+    tileSpaceElem.classList.add("player-two-turn");
+    tileSpaceElem.classList.remove("player-one-turn");
   }
 }
 
@@ -410,11 +424,25 @@ var updateWinningPlayerScore = function() {
 }
 
 var endCurrentPlayerTurn = function() {
-  // toggle player
+
   if (isPlayerOneTurn()) {
-    currentPlayer = 2;
+    // toggle player
+    currentPlayerNum = 2;
+
+    player1NameCard.classList.remove("current-player-name-hint");
   } else {
-    currentPlayer = 1;
+    currentPlayerNum = 1;
+
+    player2NameCard.classList.remove("current-player-name-hint");
+  }
+}
+
+var startOnNewTurn = function() {
+  if (isPlayerOneTurn()) {
+    // toggle player
+    player1NameCard.classList.add("current-player-name-hint");
+  } else {
+    player2NameCard.classList.add("current-player-name-hint");
   }
 }
 
@@ -422,25 +450,29 @@ var raiseSplashScreen = function(elem) {
   elem.classList.remove("minimize-pop-up");
 }
 
-var highlightWinner = function(indices) {
+var highlightWinningPlay = function(indices) {
   var highlightClass =  'player-2-mark';
-  var winMessage = 'Player 2, you win'
+  var toRemoveClass = 'player-2-move';
 
   if (isPlayerOneTurn()) {
     highlightClass = 'player-1-mark';
-    winMessage = 'Player 1, you win';
+    toRemoveClass = 'player-1-move'
   }
-
-  winnerMessageElement.textContent = winMessage;
 
   indices.forEach(function(index) {
     cells.forEach(function(cell) {
       if (index ===  Number(cell.dataset.cellIndex)) {
-        cell.classList.remove('cell-occupied');
+        // cell.classList.remove('cell-occupied');
+
+        cell.classList.remove(toRemoveClass);
         cell.classList.add(highlightClass);
       }
     });
   })
+}
+
+var presentWinnerOnScreen = function() {
+  winnerMessageElement.textContent = `Player ${currentPlayerNum}, you win`;
 }
 
 var figureOutIfGameHasEnded = function(board, segmentLength) {
@@ -455,11 +487,12 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
   var winner = checkBoardForWinner(board, segmentLength);
 
   if (winner.wasFound) {
-    console.log(`STOP GAME WINNER : Player ${currentPlayer} : (${winner.mark})`);
+    // console.log(`STOP GAME WINNER : Player ${currentPlayerNum} : (${winner.mark})`);
     
     updateWinningPlayerScore();
     refreshScoreCardsOnScreen();
-    highlightWinner(winner.indices);
+    presentWinnerOnScreen();
+    highlightWinningPlay(winner.indices);
     raiseSplashScreen(winSplashElement);
   } else if (isGameADraw(board)) {
     // console.log("ITS A DRAW");
@@ -468,6 +501,7 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
     // console.log(`CARRY ON ${currentPlayer}`);
 
     endCurrentPlayerTurn();
+    startOnNewTurn();
     updateNextMarkOnScreen();
   }
 
@@ -505,15 +539,15 @@ var handleClick = function(event) {
     // get data index for cell
 
     // https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
-    console.log(`Cell index :  ${elem.dataset.cellIndex}`)
+    // console.log(`Cell index :  ${elem.dataset.cellIndex}`)
     
-    markCell(elem);
+    if (markCell(elem)) {
+      var gameBoard = extractGameBoard();
 
-    var gameBoard = extractGameBoard();
+    // console.log(gameBoard)
 
-    console.log(gameBoard)
-
-    figureOutIfGameHasEnded(gameBoard, segmentLength);
+      figureOutIfGameHasEnded(gameBoard, segmentLength);
+    }
   }
 }
 
@@ -541,6 +575,7 @@ var handleStartGame = function() {
   startSplashElement.classList.add("minimize-pop-up");
   hasGameStarted = true;
   updateNextMarkOnScreen();
+  startOnNewTurn();
 }
 
 startButton.addEventListener('click', handleStartGame);
@@ -549,6 +584,7 @@ var handleContinueOnWin = function() {
   resetGame();
 
   endCurrentPlayerTurn();
+  startOnNewTurn();
   updateNextMarkOnScreen();
 
   winSplashElement.classList.add("minimize-pop-up");
@@ -560,6 +596,7 @@ var handleContinueOnDraw = function() {
   resetGame();
 
   endCurrentPlayerTurn();
+  startOnNewTurn();
   updateNextMarkOnScreen();
 
   drawSplashElement.classList.add("minimize-pop-up");
