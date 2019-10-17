@@ -5,8 +5,15 @@ var player2ScoreCardElem =
 document.querySelector(".player-2-score .score-card");
 var clearAllScoresBtn = document.querySelector(".clear-score-button");
 var startButton = document.querySelector(".start-game-button");
-var popUpElement = document.querySelector(".pop-up");
-var tileSpaceElem = document.querySelector(".tile-space")
+var startSplashElement = document.querySelector(".start-splash");
+var tileSpaceElem = document.querySelector(".tile-space");
+
+var winSplashElement = document.querySelector(".win-splash");
+var winContinueBtn = document.querySelector(".continue-game-on-win");
+var winnerMessageElement = document.querySelector(".winner-text");
+
+var drawSplashElement = document.querySelector(".draw-splash");
+var drawContinueBtn = document.querySelector(".continue-game-on-draw");
 
 // ----------------------------
 // JS FUNCTIONS
@@ -72,8 +79,8 @@ var performMatchOnBoard = function(board, indices) {
 
 var generateRowIndices = function(offset, segmentLength) {
   var indices = [];
-  for (var i = offset; i < segmentLength; i += 1) {
-    indices.push(i);
+  for (var i = 0; i < segmentLength; i += 1) {
+    indices.push(offset + i);
   }
   return indices;
 }
@@ -103,6 +110,7 @@ var checkAllRowsOnBoard = function(board, segmentLength) {
   for(var i = 0; i < board.length; i += segmentLength) {
     var indices = generateRowIndices(i, segmentLength);
     
+    // console.log(indices);
     var match = performMatchOnBoard(board, indices);
     if (match.wasFound) {
       var winner = evaluateWhichMarkHasWon(match);
@@ -119,10 +127,10 @@ var checkAllColumnsOnBoard = function(board, segmentLength) {
   for (var column = 0; column < segmentLength; column += 1) {
     var indices = [];
     for (var row = 0; row < segmentLength; row += 1) {
-      indices.push(getArrayIndex(segmentLength, row, column));
+      indices.push( getArrayIndex(segmentLength, row, column) );
     }
 
-    // console.table(columnIndexes);
+    // console.table(indices);
     var match = performMatchOnBoard(board, indices);
     if (match.wasFound) {
       var winner = evaluateWhichMarkHasWon(match);
@@ -345,8 +353,9 @@ var resetGame = function() {
     
     cell.classList.add('empty-cell');
 
-    cell.classList.remove('cross');
-    cell.classList.remove('nought');
+    cell.classList.remove("cell-occupied");
+    cell.classList.remove('player-1-mark');
+    cell.classList.remove('player-2-mark');
 
     if (cell.hasAttribute("data-cell-value")) {
       cell.removeAttribute("data-cell-value");
@@ -357,9 +366,33 @@ var resetGame = function() {
   nextMarkOnScreen = 'X';
 }
 
+var markCell = function(elem) {
+  if (elem.dataset.cellValue === undefined) {
+    elem.classList.remove('empty-cell');
+    elem.classList.add('cell-occupied');
+
+    if (nextMarkOnScreen === 'X') {
+      elem.dataset.cellValue = "X";
+      elem.textContent = 'X';
+
+      nextMarkOnScreen = 'O';
+
+    } else if (nextMarkOnScreen === 'O') {
+      elem.dataset.cellValue = "O";
+      elem.textContent = 'O';  
+
+      nextMarkOnScreen = 'X';
+    }
+  }
+}
+
+var isPlayerOneTurn = function() {
+  return currentPlayer === 1;
+}
+
 var updateNextMarkOnScreen = function() {
   tileSpaceElem.textContent = nextMarkOnScreen;
-  if (currentPlayer === 1) {
+  if (isPlayerOneTurn()) {
     tileSpaceElem.classList.add("player-one");
     tileSpaceElem.classList.remove("player-two");
   } else {
@@ -369,20 +402,45 @@ var updateNextMarkOnScreen = function() {
 }
 
 var updateWinningPlayerScore = function() {
-  if (currentPlayer === 1) {
+  if (isPlayerOneTurn()) {
     player1CurrentScore += 1;
-  } else if (currentPlayer === 2) {
+  } else {
     player2CurrentScore += 1;
   }
 }
 
 var endCurrentPlayerTurn = function() {
   // toggle player
-  if (currentPlayer === 1) {
+  if (isPlayerOneTurn()) {
     currentPlayer = 2;
-  } else if (currentPlayer === 2) {
+  } else {
     currentPlayer = 1;
   }
+}
+
+var raiseSplashScreen = function(elem) {
+  elem.classList.remove("minimize-pop-up");
+}
+
+var highlightWinner = function(indices) {
+  var highlightClass =  'player-2-mark';
+  var winMessage = 'Player 2, you win'
+
+  if (isPlayerOneTurn()) {
+    highlightClass = 'player-1-mark';
+    winMessage = 'Player 1, you win';
+  }
+
+  winnerMessageElement.textContent = winMessage;
+
+  indices.forEach(function(index) {
+    cells.forEach(function(cell) {
+      if (index ===  Number(cell.dataset.cellIndex)) {
+        cell.classList.remove('cell-occupied');
+        cell.classList.add(highlightClass);
+      }
+    });
+  })
 }
 
 var figureOutIfGameHasEnded = function(board, segmentLength) {
@@ -401,16 +459,19 @@ var figureOutIfGameHasEnded = function(board, segmentLength) {
     
     updateWinningPlayerScore();
     refreshScoreCardsOnScreen();
-    resetGame();
+    highlightWinner(winner.indices);
+    raiseSplashScreen(winSplashElement);
   } else if (isGameADraw(board)) {
-    console.log("ITS A DRAW");
-    resetGame();
+    // console.log("ITS A DRAW");
+    raiseSplashScreen(drawSplashElement);
   } else {
-    console.log(`CARRY ON ${currentPlayer}`);
+    // console.log(`CARRY ON ${currentPlayer}`);
+
+    endCurrentPlayerTurn();
+    updateNextMarkOnScreen();
   }
 
-  endCurrentPlayerTurn();
-  updateNextMarkOnScreen();
+
 }
 
 var refreshScoreCardsOnScreen = function() {
@@ -436,27 +497,6 @@ var extractGameBoard = function() {
   return gameBoard;
 }
 
-var markCell = function(elem) {
-  if (elem.dataset.cellValue === undefined) {
-    elem.classList.remove('empty-cell');
-
-    if (nextMarkOnScreen === 'X') {
-      elem.classList.add('cross');
-      elem.dataset.cellValue = "X";
-      elem.textContent = 'X';
-
-      nextMarkOnScreen = 'O';
-
-    } else if (nextMarkOnScreen === 'O') {
-      elem.classList.add('nought');
-      elem.dataset.cellValue = "O";
-      elem.textContent = 'O';  
-
-      nextMarkOnScreen = 'X';
-    }
-  }
-}
-
 var handleClick = function(event) {
   if (hasGameStarted) {
 
@@ -471,7 +511,7 @@ var handleClick = function(event) {
 
     var gameBoard = extractGameBoard();
 
-    // console.log(gameBoard)
+    console.log(gameBoard)
 
     figureOutIfGameHasEnded(gameBoard, segmentLength);
   }
@@ -498,11 +538,33 @@ var handleClearAllScores = function() {
 clearAllScoresBtn.addEventListener('click', handleClearAllScores);
 
 var handleStartGame = function() {
-  popUpElement.classList.add("minimize-pop-up");
+  startSplashElement.classList.add("minimize-pop-up");
   hasGameStarted = true;
   updateNextMarkOnScreen();
 }
 
 startButton.addEventListener('click', handleStartGame);
+
+var handleContinueOnWin = function() {
+  resetGame();
+
+  endCurrentPlayerTurn();
+  updateNextMarkOnScreen();
+
+  winSplashElement.classList.add("minimize-pop-up");
+}
+
+winContinueBtn.addEventListener('click', handleContinueOnWin);
+
+var handleContinueOnDraw = function() {
+  resetGame();
+
+  endCurrentPlayerTurn();
+  updateNextMarkOnScreen();
+
+  drawSplashElement.classList.add("minimize-pop-up");
+}
+
+drawContinueBtn.addEventListener('click', handleContinueOnDraw);
 
 clearAllScores();
