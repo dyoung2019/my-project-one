@@ -2,8 +2,8 @@
 
 ## General Assembly Project #1
 
-![Screenshot of Tic-Tac-Toe on load](https://github.com/dyoung2019/my-project-one/tree/master/images/Screenshot_0.png "Tic-Tac-Toe on load")
-![Screenshot of Tic-Tac-Toe on win screen](https://github.com/dyoung2019/my-project-one/tree/master/images/Screenshot_1.png "Tic-Tac-Toe on win scren")
+![](https://github.com/dyoung2019/my-project-one/raw/master/images/TitleScreen-250wpx.jpg)
+![](https://github.com/dyoung2019/my-project-one/raw/master/images/WinScreen-250wpx.jpg)
 
 [link](https://dyoung2019.github.io/my-project-one/)
 
