@@ -25,7 +25,7 @@ Though googling __isometric css__ I found a bunch of links on using isometric ti
   - [tutsplus.com - How to Create an Isometric Layout With CSS 3D Transforms](https://webdesign.tutsplus.com/tutorials/create-an-isometric-layout-with-3d-transforms--cms-27134)
   - [Andy Barefoot - Isometric layout with CSS Grid](https://codepen.io/andybarefoot/post/isometric-layout-with-css-grid)
   - [Andy Barefoot - Codepen example](https://codepen.io/andybarefoot/pen/69bd447c7b49ba8a43a7de990f976ba1)
-  - [Rory Ashford-Bentley - Isometric CSS Grid](https://roryashfordbentley.me/projects/isometric-css-grid\)
+  - [Rory Ashford-Bentley - Isometric CSS Grid](https://roryashfordbentley.me/projects/isometric-css-grid)
 
 From own [codepen test](https://codepen.io/dyoung2019/pen/WNNwyrg?editors=1111), I found that the math involved with the CSS ``transform`` involving skews and rotations made the placement of tiles difficult. Yet the rendering of text looked okay.
 
@@ -67,7 +67,7 @@ I incorporate more transforms for scaling and translation to nudge tile into the
 
 #### Day 4. (Fri. )
 
-- Finally integrated a typeface into the game; Chose Montserrat but 
+- Finally integrated a typeface into the game; Chose Montserrat (from Google Fonts) 
 
 
 ### Lessons Learned
@@ -82,7 +82,7 @@ I incorporate more transforms for scaling and translation to nudge tile into the
 ### TODOs
 
 Possible features to incorporate later
-  - Web page doesn't scale with screen size
+  - Web page doesn't scale with screen size (media queries?)
   - Computer player
   - SFX with Web Audio 
   - Save game scores
